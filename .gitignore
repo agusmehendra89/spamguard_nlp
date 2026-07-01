@@ -21,3 +21,5 @@ Thumbs.db
 
 # Notebook cache
 .ipynb_checkpoints/
+
+backend/.vercel/
