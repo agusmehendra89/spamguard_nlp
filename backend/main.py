@@ -1,7 +1,7 @@
 ﻿from pathlib import Path
 
 import joblib
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -24,8 +24,10 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://spamguard-nlp-ukje.vercel.app",
     ],
-    allow_credentials=True,
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -58,9 +60,30 @@ def root():
     }
 
 
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "model_loaded": model is not None,
+        "vectorizer_loaded": vectorizer is not None,
+    }
+
+
 @app.post("/predict", response_model=PredictionResponse)
 def predict_spam(request: MessageRequest):
+    if not request.message or not request.message.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Message tidak boleh kosong.",
+        )
+
     clean_message = clean_text(request.message)
+
+    if not clean_message:
+        raise HTTPException(
+            status_code=400,
+            detail="Message tidak memiliki kata yang bisa diproses setelah preprocessing.",
+        )
 
     vectorized_message = vectorizer.transform([clean_message])
 
