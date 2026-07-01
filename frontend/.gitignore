@@ -1,15 +1,13 @@
-﻿# Python
+# Python
 backend/venv/
-backend/__pycache__/
-**/__pycache__/
+__pycache__/
 *.pyc
 
-# Next.js / Node
+# Node / Next.js
 frontend/node_modules/
 frontend/.next/
 frontend/out/
 frontend/.env.local
-frontend/.vercel/
 
 # Environment
 .env
@@ -19,5 +17,5 @@ frontend/.vercel/
 .DS_Store
 Thumbs.db
 
-# Notebook cache
+# Cache
 .ipynb_checkpoints/
